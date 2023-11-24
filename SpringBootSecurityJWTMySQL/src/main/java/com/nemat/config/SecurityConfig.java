@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.nemat.filter.SecurityFilter;
 
 @SuppressWarnings("deprecation")
 @EnableWebSecurity
@@ -25,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private InvalidUserAuthEntryPoint authenticationEntryPoint;
+	
+	@Autowired
+	private SecurityFilter securityFilter;
 	
 	@Override
 	@Bean
@@ -50,9 +56,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.authenticationEntryPoint(authenticationEntryPoint)
 		.and()
 		.sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		
-//		TODO : Verify user for 2nd request onwards...
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		.and()
+//		register filter 2nd request onwards
+		.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 }
